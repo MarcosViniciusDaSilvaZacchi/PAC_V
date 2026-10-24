@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Imigrante Cidadão - Centro Universitário Católica de Santa Catarina</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#9c1c28',
+              redHover: '#821420',
+              redLight: '#fdf2f2',
+              dark: '#1e293b',
+              gray: '#f8fafc',
+              border: '#e2e8f0',
+              accent: '#d97706'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .modal-backdrop { display: none; }
+    .modal-backdrop.active { display: flex; }
+    /* Estilização suave de scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-red-100 selection:text-brand-red">
+
+  <!-- ========================================== -->
+  <!-- BARRA DE FERRAMENTAS DO PROTÓTIPO (FIGMA)   -->
+  <!-- ========================================== -->
+  <nav class="bg-slate-900 text-white text-xs border-b border-slate-800 px-4 py-2 sticky top-0 z-[60] shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 font-mono">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-bold text-slate-200">PAC V • Alta Fidelidade (Figma Capture)</span>
+      </div>
+      
+      <!-- Botões de Troca Rápida de Tela -->
+      <div class="flex items-center flex-wrap gap-1.5">
+        <button onclick="switchView('view-home')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition flex items-center gap-1">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i> Início
+        </button>
+        <button onclick="loginAs('aluno')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition flex items-center gap-1">
+          <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-red-400"></i> Aluno
+        </button>
+        <button onclick="loginAs('professor')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition flex items-center gap-1">
+          <i data-lucide="book-check" class="w-3.5 h-3.5 text-amber-400"></i> Professor
+        </button>
+        <button onclick="loginAs('admin')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition flex items-center gap-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-400"></i> Admin
+        </button>
+        <span class="text-slate-600 px-1">|</span>
+        <button onclick="openModal('modal-cartilha')" class="px-2.5 py-1 rounded bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/60 transition flex items-center gap-1">
+          <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Cartilha
+        </button>
+        <button onclick="openModal('modal-preview-pdf')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Leitor PDF
+        </button>
+        <button onclick="openModal('modal-login')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
+          <i data-lucide="log-in" class="w-3.5 h-3.5"></i> Modal Login
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- HEADER INSTITUCIONAL CATÓLICA SC           -->
+  <!-- ========================================== -->
+  <header class="bg-brand-red text-white shadow-md sticky top-[37px] z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo e Título -->
+        <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchView('view-home')">
+          <div class="bg-white p-2 rounded-xl shadow-sm flex items-center justify-center h-12 w-auto">
+            <img src="./logo_catolica_sc.png" alt="Católica SC" class="h-8 w-auto object-contain" onerror="this.outerHTML='<span class=\'text-brand-red font-black text-xl tracking-tighter\'>CATÓLICA<span class=\'text-slate-800 font-bold ml-1 text-xs\'>SC</span></span>'" />
+          </div>
+          <div class="border-l border-red-400/50 pl-3">
+            <h1 class="text-base sm:text-lg font-bold leading-tight tracking-tight">Portal Imigrante Cidadão</h1>
+            <p class="text-xs text-red-100 flex items-center gap-1.5">
+              <span>Extensão Universitária</span>
+              <span>•</span>
+              <span class="text-red-200">Joinville / SC</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Ações do Cabeçalho -->
+        <div class="flex items-center gap-3">
+          <!-- Seletor de Idiomas (Inclusão e Acessibilidade) -->
+          <div class="hidden md:flex items-center bg-red-950/40 rounded-lg p-1 text-xs border border-red-800/50">
+            <button class="px-2 py-0.5 rounded bg-white text-brand-red font-bold shadow-xs">PT</button>
+            <button class="px-2 py-0.5 rounded text-red-200 hover:text-white" title="Español">ES</button>
+            <button class="px-2 py-0.5 rounded text-red-200 hover:text-white" title="Kreyòl ayisyen">HT</button>
+            <button class="px-2 py-0.5 rounded text-red-200 hover:text-white" title="English">EN</button>
+          </div>
+
+          <!-- Botão da Cartilha -->
+          <button onclick="openModal('modal-cartilha')" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm px-3.5 py-2 rounded-xl transition border border-white/20 shadow-xs font-medium">
+            <i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i>
+            <span class="hidden sm:inline">Cartilha Digital</span>
+            <span class="sm:hidden">Cartilha</span>
+          </button>
+
+          <!-- Identificador do Perfil / Botão de Login -->
+          <div id="user-badge" class="hidden items-center gap-2.5 bg-black/20 backdrop-blur-xs px-3.5 py-1.5 rounded-xl text-xs border border-white/10">
+            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+            <div>
+              <span id="user-badge-role" class="block font-semibold leading-tight"></span>
+              <span id="user-badge-name" class="text-[11px] text-red-100 block leading-tight"></span>
+            </div>
+            <button onclick="logout()" title="Encerrar Sessão" class="ml-2 text-red-200 hover:text-white transition p-1 hover:bg-white/10 rounded-lg">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Botão de Entrar (Quando não logado) -->
+          <button id="btn-login-header" onclick="openModal('modal-login')" class="bg-white text-brand-red font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl hover:bg-slate-100 transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="user" class="w-4 h-4"></i>
+            <span>Acessar Portal</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MIOLO PRINCIPAL (VIEWPORT)                 -->
+  <!-- ========================================== -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ======================================================= -->
+    <!-- 1. VIEW HOME: APRESENTAÇÃO INSTITUCIONAL E ACESSO RÁPIDO -->
+    <!-- ======================================================= -->
+    <section id="view-home" class="tab-content active space-y-12">
+      <!-- Hero Banner -->
+      <div class="bg-gradient-to-br from-red-950 via-brand-red to-red-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden border border-red-800">
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/20 mb-4">
+            <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-300"></i>
+            <span>Projeto de Aplicação Comunitária • Católica de Santa Catarina</span>
+          </div>
+
+          <h2 class="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-white">
+            Aprenda Língua Portuguesa e integre-se à comunidade.
+          </h2>
+
+          <p class="mt-4 text-red-100 text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
+            Plataforma unificada para alunos imigrantes e docentes do Projeto Imigrante Cidadão. Acesse apostilas, materiais das aulas das 120 horas de curso e informações para regularização documental.
+          </p>
+
+          <!-- Badges de Impacto -->
+          <div class="mt-6 flex flex-wrap gap-4 text-xs font-medium text-red-200">
+            <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1 rounded-lg border border-white/10">
+              <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i> Curso de 120 Horas
+            </span>
+            <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1 rounded-lg border border-white/10">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i> Certificado de Extensão
+            </span>
+            <span class="flex items-center gap-1.5 bg-black/25 px-3 py-1 rounded-lg border border-white/10">
+              <i data-lucide="sparkles" class="w-4 h-4 text-sky-400"></i> 100% Gratuito à Comunidade
+            </span>
+          </div>
+
+          <!-- CTAs -->
+          <div class="mt-8 flex flex-wrap items-center gap-4">
+            <button onclick="openModal('modal-cartilha')" class="bg-white text-brand-red font-bold px-6 py-3.5 rounded-xl hover:bg-slate-100 transition shadow-lg flex items-center gap-2 text-sm sm:text-base">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+              <span>Consultar Cartilha Digital</span>
+            </button>
+            <button onclick="openModal('modal-login')" class="bg-brand-redHover hover:bg-red-950 text-white font-semibold px-6 py-3.5 rounded-xl border border-red-400/40 transition shadow flex items-center gap-2 text-sm sm:text-base">
+              <i data-lucide="arrow-right-circle" class="w-5 h-5"></i>
+              <span>Entrar no Ambiente de Aulas</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fundo Decorativo -->
+        <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-10 translate-y-10">
+          <i data-lucide="globe-2" class="w-96 h-96"></i>
+        </div>
+      </div>
+
+      <!-- Perfis de Acesso -->
+      <div>
+        <div class="text-center max-w-xl mx-auto mb-8">
+          <h3 class="text-2xl font-bold text-slate-900 tracking-tight">Acesso Rápido por Perfil</h3>
+          <p class="text-slate-500 text-sm mt-1">Selecione o seu perfil para navegar na área correspondente.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          
+          <!-- Card Aluno -->
+          <div class="bg-white border border-slate-200 hover:border-brand-red/40 rounded-2xl p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="w-13 h-13 p-3 bg-red-50 text-brand-red rounded-xl inline-flex items-center justify-center mb-5 group-hover:scale-110 transition duration-300">
+                <i data-lucide="graduation-cap" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-bold text-brand-red bg-red-100/60 px-2.5 py-0.5 rounded-full uppercase tracking-wider block w-fit mb-2">Imigrantes & Refugiados</span>
+              <h4 class="text-xl font-bold text-slate-900">Portal do Aluno</h4>
+              <p class="text-slate-600 text-sm mt-2.5 leading-relaxed">
+                Acesse as disciplinas em que está matriculado, baixe materiais didáticos em PDF aprovados pelo professor e consulte o seu progresso no curso de 120h.
+              </p>
+            </div>
+            <div class="mt-8 pt-5 border-t border-slate-100">
+              <button onclick="loginAs('aluno')" class="w-full bg-slate-900 hover:bg-brand-red text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-xs">
+                <span>Entrar como Aluno</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Professor -->
+          <div class="bg-white border border-slate-200 hover:border-amber-400/60 rounded-2xl p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="w-13 h-13 p-3 bg-amber-50 text-amber-700 rounded-xl inline-flex items-center justify-center mb-5 group-hover:scale-110 transition duration-300">
+                <i data-lucide="book-check" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-bold text-amber-700 bg-amber-100/70 px-2.5 py-0.5 rounded-full uppercase tracking-wider block w-fit mb-2">Docentes & Monitores</span>
+              <h4 class="text-xl font-bold text-slate-900">Portal do Professor</h4>
+              <p class="text-slate-600 text-sm mt-2.5 leading-relaxed">
+                Cadastre turmas e disciplinas, faça upload de novas aulas em PDF, gerencie alunos matriculados e controle a chave de liberação/ocultação de materiais.
+              </p>
+            </div>
+            <div class="mt-8 pt-5 border-t border-slate-100">
+              <button onclick="loginAs('professor')" class="w-full bg-brand-red hover:bg-brand-redHover text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-xs">
+                <span>Entrar como Professor</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Administrador -->
+          <div class="bg-white border border-slate-200 hover:border-indigo-400/60 rounded-2xl p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="w-13 h-13 p-3 bg-indigo-50 text-indigo-700 rounded-xl inline-flex items-center justify-center mb-5 group-hover:scale-110 transition duration-300">
+                <i data-lucide="shield-check" class="w-7 h-7"></i>
+              </div>
+              <span class="text-[11px] font-bold text-indigo-700 bg-indigo-100/70 px-2.5 py-0.5 rounded-full uppercase tracking-wider block w-fit mb-2">Coordenação & Extensão</span>
+              <h4 class="text-xl font-bold text-slate-900">Portal da Coordenação</h4>
+              <p class="text-slate-600 text-sm mt-2.5 leading-relaxed">
+                Gestão institucional do projeto PAC: cadastro e credenciamento de professores voluntários, relatórios de impacto comunitário e controle de turmas.
+              </p>
+            </div>
+            <div class="mt-8 pt-5 border-t border-slate-100">
+              <button onclick="loginAs('admin')" class="w-full bg-slate-800 hover:bg-indigo-900 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-xs">
+                <span>Painel da Coordenação</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Seção Informativa de Apoio ao Imigrante -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-xs">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="space-y-2">
+            <h4 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="map-pin" class="w-5 h-5 text-brand-red"></i>
+              <span>Atendimento Presencial no Campus Joinville</span>
+            </h4>
+            <p class="text-slate-600 text-sm max-w-2xl leading-relaxed">
+              As aulas de Língua Portuguesa ocorrem aos sábados no Centro Universitário Católica de Santa Catarina (Rua Visconde de Taunay, 427 - Atiradores). Em caso de dúvidas sobre matrículas ou documentação, procure a coordenação do projeto ou acesse a nossa cartilha digital.
+            </p>
+          </div>
+          <button onclick="openModal('modal-cartilha')" class="shrink-0 bg-red-50 hover:bg-red-100 text-brand-red font-semibold text-xs px-5 py-3 rounded-xl border border-red-200 transition flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Baixar Cartilha de Direitos (PDF)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- 2. VIEW ALUNO: AULAS LIBERADAS E DOWNLOAD DE MATERIAIS  -->
+    <!-- ======================================================= -->
+    <section id="view-aluno" class="tab-content space-y-8">
+      <!-- Header do Aluno -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-red-100 text-brand-red text-xs px-2.5 py-0.5 rounded-full font-bold">Ambiente do Estudante</span>
+            <span class="text-slate-300">•</span>
+            <span class="text-xs text-slate-500 font-medium">Matrícula: <strong>2026-IM-042</strong></span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Meus Cursos e Materiais</h2>
+          <p class="text-slate-500 text-xs mt-0.5">Aluno: Yan Carlos & Marcos Vinicius • Turma 2026/2</p>
+        </div>
+
+        <!-- Indicador de Disciplina Matriculada -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-red-100 text-brand-red flex items-center justify-center">
+            <i data-lucide="book-marked" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold block">Disciplina Ativa</span>
+            <span class="text-sm font-bold text-slate-800">Português Básico I (120h)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progresso das 120 Horas (Destaque Pedagógico) -->
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
+          <div>
+            <h3 class="text-base font-bold flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+              <span>Progresso na Carga Horária Obrigatória (120 Horas)</span>
+            </h3>
+            <p class="text-xs text-slate-300 mt-0.5">Acompanhe as horas completadas conforme as aulas são ministradas e validadas.</p>
+          </div>
+          <div class="text-right">
+            <span class="text-2xl font-extrabold text-white">36h</span>
+            <span class="text-xs text-slate-400"> / 120h (30%)</span>
+          </div>
+        </div>
+        <!-- Barra de Progresso -->
+        <div class="w-full bg-slate-700 h-3 rounded-full overflow-hidden">
+          <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 30%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-medium">
+          <span>Início: 15/08/2026</span>
+          <span class="text-emerald-400 font-semibold">9 aulas concluídas</span>
+          <span>Término previsto: 05/12/2026</span>
+        </div>
+      </div>
+
+      <!-- Filtros e Status -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div class="flex items-center gap-2">
+          <h3 class="font-bold text-slate-800 text-lg">Aulas e Materiais Didáticos Disponíveis</h3>
+          <span id="aluno-count-badge" class="bg-brand-red text-white text-xs px-2 py-0.5 rounded-full font-bold"></span>
+        </div>
+        <div class="text-xs text-slate-500 flex items-center gap-1.5">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-brand-red"></i>
+          <span>Apenas as aulas liberadas pelo seu professor aparecem aqui.</span>
+        </div>
+      </div>
+
+      <!-- Grid de Aulas Liberadas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="aluno-aula-grid">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- 3. VIEW PROFESSOR: GESTÃO DE TURMAS, UPLOAD E LIBERAÇÃO -->
+    <!-- ======================================================= -->
+    <section id="view-professor" class="tab-content space-y-8">
+      <!-- Topo do Painel Docente -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Painel do Docente</span>
+            <span class="text-slate-300">•</span>
+            <span class="text-xs text-slate-500 font-medium">Profª. Dra. Glaci Gurgacz</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Gestão de Disciplinas & Conteúdos</h2>
+          <p class="text-slate-500 text-xs mt-0.5">Gerenciamento de materiais didáticos (PDFs), chave de liberação e estudantes matriculados.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="openModal('modal-matricular-aluno')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 border border-slate-300">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Matricular Aluno</span>
+          </button>
+          <button onclick="openModal('modal-nova-aula')" class="bg-brand-red hover:bg-brand-redHover text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Cadastrar Nova Aula</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Abas Internas do Docente: [1. Aulas & Materiais] [2. Alunos Matriculados] -->
+      <div class="flex border-b border-slate-200 space-x-6 text-sm font-bold">
+        <button id="tab-btn-aulas" onclick="switchProfTab('aulas')" class="pb-3 border-b-2 border-brand-red text-brand-red flex items-center gap-2">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Aulas & Materiais Didáticos</span>
+        </button>
+        <button id="tab-btn-alunos" onclick="switchProfTab('alunos')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Alunos Matriculados (<span id="total-alunos-prof">5</span>)</span>
+        </button>
+      </div>
+
+      <!-- SUB-ABA 1: AULAS E MATERIAIS -->
+      <div id="prof-subview-aulas" class="space-y-6">
+        <!-- Filtros de Turma -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex gap-2 overflow-x-auto pb-1">
+            <button class="bg-slate-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-xs">Português Básico I (Turma 2026/2)</button>
+            <button class="bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:bg-slate-50">Português Intermediário</button>
+            <button class="bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:bg-slate-50">Cultura e Cidadania</button>
+          </div>
+          <span class="text-xs text-slate-500 font-medium">Dica: Alterne o botão para liberar a visualização ao aluno.</span>
+        </div>
+
+        <!-- Lista de Aulas e Materiais -->
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="folder" class="w-4 h-4 text-brand-red"></i>
+              <h3 class="font-bold text-slate-800 text-sm sm:text-base">Aulas Cadastradas na Disciplina</h3>
+            </div>
+            <span class="text-xs text-slate-500 font-medium">Controle de Status (RF03 / RF04)</span>
+          </div>
+          <div class="divide-y divide-slate-100" id="prof-aula-list">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-ABA 2: ALUNOS MATRICULADOS -->
+      <div id="prof-subview-alunos" class="hidden space-y-6">
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm sm:text-base">Lista de Alunos da Turma (Português Básico I)</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Gerencie os estudantes inscritos nas 120 horas de formação.</p>
+            </div>
+            <button onclick="openModal('modal-matricular-aluno')" class="bg-brand-red text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:bg-brand-redHover transition flex items-center gap-1.5 w-fit">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              <span>Novo Aluno</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-100 uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th class="px-6 py-3.5">Nome do Aluno</th>
+                  <th class="px-6 py-3.5">País de Origem</th>
+                  <th class="px-6 py-3.5">Contato / E-mail</th>
+                  <th class="px-6 py-3.5">Frequência</th>
+                  <th class="px-6 py-3.5">Status</th>
+                  <th class="px-6 py-3.5 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="prof-alunos-table-body" class="divide-y divide-slate-100">
+                <!-- Renderizado via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- 4. VIEW ADMINISTRADOR: COORDENAÇÃO, PROFESSORES E RELATÓRIO -->
+    <!-- ======================================================= -->
+    <section id="view-admin" class="tab-content space-y-8">
+      <!-- Header Admin -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Coordenação Geral</span>
+            <span class="text-slate-300">•</span>
+            <span class="text-xs text-slate-500 font-medium">Setor de Extensão Católica SC</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Painel Institucional do Projeto</h2>
+          <p class="text-slate-500 text-xs mt-0.5">Gestão de docentes voluntários, métricas de atendimento comunitário e monitoramento de turmas.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="openModal('modal-novo-prof')" class="bg-brand-red hover:bg-brand-redHover text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Cadastrar Professor</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs / Métricas Rápidas do Projeto PAC -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Alunos Atendidos</span>
+            <div class="p-2 bg-red-50 text-brand-red rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
+          </div>
+          <div class="mt-3">
+            <span class="text-3xl font-extrabold text-slate-900">42</span>
+            <span class="text-xs text-emerald-600 font-bold ml-2">~100% ativos</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Venezuela, Haiti, Paquistão</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Carga Horária</span>
+            <div class="p-2 bg-amber-50 text-amber-700 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div>
+          </div>
+          <div class="mt-3">
+            <span class="text-3xl font-extrabold text-slate-900">120h</span>
+            <span class="text-xs text-slate-500 font-medium ml-2">Certificadas</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Língua Portuguesa & Cidadania</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Professores / Monitores</span>
+            <div class="p-2 bg-indigo-50 text-indigo-700 rounded-lg"><i data-lucide="award" class="w-5 h-5"></i></div>
+          </div>
+          <div class="mt-3">
+            <span class="text-3xl font-extrabold text-slate-900" id="admin-total-profs">3</span>
+            <span class="text-xs text-indigo-600 font-bold ml-2">Voluntários</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Docentes e Acadêmicos PAC</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Turmas em Andamento</span>
+            <div class="p-2 bg-emerald-50 text-emerald-700 rounded-lg"><i data-lucide="layers" class="w-5 h-5"></i></div>
+          </div>
+          <div class="mt-3">
+            <span class="text-3xl font-extrabold text-slate-900">2</span>
+            <span class="text-xs text-emerald-600 font-bold ml-2">Presenciais</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Básico I e Intermediário</p>
+        </div>
+      </div>
+
+      <!-- Tabela de Professores Cadastrados (RF01) -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm sm:text-base">Corpo Docente e Voluntários Cadastrados (RF01)</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Professores autorizados a criar aulas e gerenciar turmas no sistema.</p>
+          </div>
+          <button onclick="openModal('modal-novo-prof')" class="bg-slate-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg hover:bg-brand-red transition flex items-center gap-1.5 w-fit">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Cadastrar Professor</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-100 uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="px-6 py-3.5">Professor / Titulação</th>
+                <th class="px-6 py-3.5">E-mail Institucional</th>
+                <th class="px-6 py-3.5">Disciplina / Turma Vinculada</th>
+                <th class="px-6 py-3.5">Data de Cadastro</th>
+                <th class="px-6 py-3.5">Status</th>
+                <th class="px-6 py-3.5 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="admin-profs-table-body" class="divide-y divide-slate-100">
+              <!-- Renderizado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- FOOTER OFICIAL CATÓLICA SC                 -->
+  <!-- ========================================== -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="space-y-1 text-center sm:text-left">
+        <p class="font-bold text-slate-300">Centro Universitário Católica de Santa Catarina - Joinville</p>
+        <p class="text-slate-500">Projeto de Aplicação Comunitária (PAC Extensionista) • Portal Imigrante Cidadão</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-4 text-[11px]">
+        <span>Rua Visconde de Taunay, 427 - Atiradores</span>
+        <span>•</span>
+        <button onclick="openModal('modal-cartilha')" class="hover:text-white underline font-semibold text-brand-red">Cartilha Digital</button>
+        <span>•</span>
+        <span class="text-slate-600">LGPD & Segurança Aplicada</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: LOGIN E SELEÇÃO DE PERFIL (RF09)                      -->
+  <!-- ============================================================== -->
+  <div id="modal-login" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border border-slate-100 relative">
+      <button onclick="closeModal('modal-login')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 bg-red-100 text-brand-red rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h4 class="text-xl font-bold text-slate-900">Acesso ao Portal</h4>
+        <p class="text-xs text-slate-500 mt-1">Informe suas credenciais ou utilize o acesso rápido de teste</p>
+      </div>
+
+      <!-- Abas de Perfil para Demonstração Rápida -->
+      <div class="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-xl mb-5 text-xs font-semibold text-center">
+        <button id="login-tab-aluno" onclick="setLoginRole('aluno')" class="py-2 rounded-lg bg-white shadow-xs text-brand-red font-bold">Aluno</button>
+        <button id="login-tab-prof" onclick="setLoginRole('professor')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900">Professor</button>
+        <button id="login-tab-admin" onclick="setLoginRole('admin')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900">Admin</button>
+      </div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail ou Matrícula</label>
+          <input type="text" id="login-email" value="aluno@catolicasc.edu.br" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" required />
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700">Senha</label>
+            <a href="#" onclick="alert('Funcionalidade de redefinição de senha via e-mail.')" class="text-[11px] text-brand-red hover:underline">Esqueceu?</a>
+          </div>
+          <input type="password" id="login-password" value="********" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" required />
+        </div>
+
+        <button type="submit" class="w-full bg-brand-red hover:bg-brand-redHover text-white font-bold py-3 rounded-xl shadow transition text-sm flex items-center justify-center gap-2">
+          <span>Entrar no Sistema</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <div class="mt-5 pt-4 border-t border-slate-100 text-center">
+        <span class="text-[11px] text-slate-400">Ambiente de Extensão Comunitária Católica SC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: CADASTRAR NOVA AULA COM UPLOAD DE PDF (RF03)          -->
+  <!-- ============================================================== -->
+  <div id="modal-nova-aula" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-red-100 text-brand-red flex items-center justify-center">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-900">Cadastrar Nova Aula</h4>
+        </div>
+        <button onclick="closeModal('modal-nova-aula')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-nova-aula" onsubmit="salvarNovaAula(event)" class="space-y-4 mt-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Disciplina / Turma</label>
+          <select id="aula-turma" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none bg-white">
+            <option value="Português Básico I">Português Básico I (120h)</option>
+            <option value="Português Intermediário">Português Intermediário (120h)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Título da Aula</label>
+          <input type="text" id="aula-titulo" required placeholder="Ex: Aula 04 - Alfabeto, Sons do Português e Pronúncia" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Descrição Breve / Orientações</label>
+          <textarea id="aula-desc" rows="2" placeholder="Conteúdo abordado e tarefas práticas para casa..." class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Material Didático (Apostila em PDF)</label>
+          <div onclick="document.getElementById('aula-file').click()" class="border-2 border-dashed border-slate-300 rounded-2xl p-5 text-center cursor-pointer hover:border-brand-red transition bg-slate-50 hover:bg-red-50/40">
+            <i data-lucide="file-up" class="w-8 h-8 mx-auto text-brand-red"></i>
+            <p class="text-xs text-slate-600 mt-2 font-medium">Clique para selecionar o PDF da aula ou arraste aqui</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Formatos suportados: .PDF (máx. 25MB)</p>
+            <input type="file" id="aula-file" accept=".pdf" class="hidden" onchange="updateFileName(this, 'file-selected-name')" />
+            <span id="file-selected-name" class="text-xs font-bold text-brand-red mt-2 block"></span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+          <div>
+            <span class="block text-xs font-bold text-slate-800">Liberar aula imediatamente?</span>
+            <span class="text-[11px] text-slate-500">Se desmarcado, ficará em rascunho apenas para você.</span>
+          </div>
+          <input type="checkbox" id="aula-liberada" class="w-5 h-5 text-brand-red rounded cursor-pointer accent-brand-red" checked />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('modal-nova-aula')" class="text-xs font-semibold text-slate-600 px-4 py-2.5 rounded-xl hover:bg-slate-100">Cancelar</button>
+          <button type="submit" class="text-xs font-semibold bg-brand-red hover:bg-brand-redHover text-white px-5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Salvar e Publicar Aula</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: EDITAR / SUBSTITUIR MATERIAL DIDÁTICO (RF04)          -->
+  <!-- ============================================================== -->
+  <div id="modal-editar-aula" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-900">Editar Aula / Substituir PDF (RF04)</h4>
+        </div>
+        <button onclick="closeModal('modal-editar-aula')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-editar-aula" onsubmit="salvarEdicaoAula(event)" class="space-y-4 mt-5">
+        <input type="hidden" id="edit-aula-id" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Título da Aula</label>
+          <input type="text" id="edit-aula-titulo" required class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Descrição</label>
+          <textarea id="edit-aula-desc" rows="2" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Substituir Arquivo PDF Atual</label>
+          <div onclick="document.getElementById('edit-aula-file').click()" class="border-2 border-dashed border-amber-300 rounded-2xl p-4 text-center cursor-pointer hover:border-brand-red transition bg-amber-50/40">
+            <i data-lucide="refresh-cw" class="w-6 h-6 mx-auto text-amber-700"></i>
+            <p class="text-xs text-slate-700 mt-1 font-medium">Clique para escolher um novo PDF para substituir</p>
+            <input type="file" id="edit-aula-file" accept=".pdf" class="hidden" onchange="updateFileName(this, 'edit-file-selected-name')" />
+            <span id="edit-file-selected-name" class="text-xs font-bold text-brand-red mt-1 block"></span>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('modal-editar-aula')" class="text-xs font-semibold text-slate-600 px-4 py-2.5 rounded-xl hover:bg-slate-100">Cancelar</button>
+          <button type="submit" class="text-xs font-semibold bg-brand-red hover:bg-brand-redHover text-white px-5 py-2.5 rounded-xl shadow transition">Atualizar Material</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: MATRICULAR NOVO ALUNO (RF05)                          -->
+  <!-- ============================================================== -->
+  <div id="modal-matricular-aluno" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-red-100 text-brand-red flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-900">Matricular Novo Aluno (RF05)</h4>
+        </div>
+        <button onclick="closeModal('modal-matricular-aluno')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="salvarNovoAluno(event)" class="space-y-4 mt-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo do Aluno</label>
+          <input type="text" id="aluno-nome" required placeholder="Ex: Jean Pierre Alexandre" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">País de Origem</label>
+            <select id="aluno-pais" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none bg-white">
+              <option value="Haiti">Haiti 🇭🇹</option>
+              <option value="Venezuela">Venezuela 🇻🇪</option>
+              <option value="Paquistão">Paquistão 🇵🇰</option>
+              <option value="Cuba">Cuba 🇨🇺</option>
+              <option value="Colômbia">Colômbia 🇨🇴</option>
+              <option value="Outro">Outro País</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Telefone / WhatsApp</label>
+            <input type="text" id="aluno-telefone" placeholder="(47) 99999-9999" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail</label>
+          <input type="email" id="aluno-email" required placeholder="aluno@exemplo.com" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Turma de Vinculação</label>
+          <select id="aluno-turma-vinculo" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none bg-white">
+            <option value="Português Básico I">Português Básico I (120h)</option>
+            <option value="Português Intermediário">Português Intermediário (120h)</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('modal-matricular-aluno')" class="text-xs font-semibold text-slate-600 px-4 py-2.5 rounded-xl hover:bg-slate-100">Cancelar</button>
+          <button type="submit" class="text-xs font-semibold bg-brand-red hover:bg-brand-redHover text-white px-5 py-2.5 rounded-xl shadow transition">Confirmar Matrícula</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: CADASTRAR PROFESSOR VOLUNTÁRIO (ADMIN - RF01)         -->
+  <!-- ============================================================== -->
+  <div id="modal-novo-prof" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+          </div>
+          <h4 class="text-lg font-bold text-slate-900">Cadastrar Professor / Monitor (RF01)</h4>
+        </div>
+        <button onclick="closeModal('modal-novo-prof')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="salvarNovoProfessor(event)" class="space-y-4 mt-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo</label>
+          <input type="text" id="prof-nome" required placeholder="Ex: Prof. Dr. Rogério Elias" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">E-mail Institucional</label>
+          <input type="email" id="prof-email" required placeholder="nome.sobrenome@catolicasc.org.br" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Disciplina / Atribuição</label>
+          <select id="prof-disc" class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-brand-red outline-none bg-white">
+            <option value="Português Básico I">Português Básico I (120h)</option>
+            <option value="Português Intermediário">Português Intermediário (120h)</option>
+            <option value="Cultura e Cidadania Brasileira">Cultura e Cidadania Brasileira</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('modal-novo-prof')" class="text-xs font-semibold text-slate-600 px-4 py-2.5 rounded-xl hover:bg-slate-100">Cancelar</button>
+          <button type="submit" class="text-xs font-semibold bg-brand-red hover:bg-brand-redHover text-white px-5 py-2.5 rounded-xl shadow transition">Concluir Cadastro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 6: CARTILHA DIGITAL DO IMIGRANTE (RF07)                  -->
+  <!-- ============================================================== -->
+  <div id="modal-cartilha" class="modal-backdrop fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-7 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 bg-red-100 text-brand-red rounded-xl flex items-center justify-center">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="text-lg font-bold text-slate-900">Cartilha Informativa do Imigrante</h4>
+              <p class="text-[11px] text-slate-400">Guia de Apoio Social, Direitos e Cidadania • Católica SC</p>
+            </div>
+          </div>
+          <button onclick="closeModal('modal-cartilha')" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="mt-4 space-y-4 text-sm text-slate-600 max-h-[50vh] overflow-y-auto pr-2">
+          <div class="bg-red-50/80 p-4 rounded-2xl border border-red-100">
+            <h5 class="font-bold text-brand-red text-sm">Bem-vindo a Joinville!</h5>
+            <p class="text-xs text-slate-700 mt-1 leading-relaxed">
+              O Projeto Imigrante Cidadão preparou esta cartilha com informações fundamentais para orientar sua permanência, estudo e inserção digna no Brasil.
+            </p>
+          </div>
+
+          <div class="border border-slate-100 rounded-xl p-3.5 hover:border-slate-300 transition">
+            <h6 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <i data-lucide="file-badge" class="w-4 h-4 text-brand-red"></i> 1. Documentação Essencial no Brasil
+            </h6>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              • <strong>CPF:</strong> Gratuito na Receita Federal ou em agências conveniadas.<br />
+              • <strong>RNM (Registro Nacional Migratório):</strong> Agendamento obrigatório na Polícia Federal.<br />
+              • <strong>Carteira de Trabalho Digital (CTPS):</strong> Emissão online via aplicativo Gov.br.
+            </p>
+          </div>
+
+          <div class="border border-slate-100 rounded-xl p-3.5 hover:border-slate-300 transition">
+            <h6 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <i data-lucide="heart" class="w-4 h-4 text-emerald-600"></i> 2. Acesso à Saúde Pública (SUS)
+            </h6>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              O atendimento no Sistema Único de Saúde (SUS) é 100% gratuito e um direito constitucional para qualquer imigrante ou refugiado, mesmo em processo de regularização. Procure o Posto de Saúde (UBS) mais próximo de sua residência.
+            </p>
+          </div>
+
+          <div class="border border-slate-100 rounded-xl p-3.5 hover:border-slate-300 transition">
+            <h6 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+              <i data-lucide="graduation-cap" class="w-4 h-4 text-blue-600"></i> 3. Cursos de Extensão Católica SC
+            </h6>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              As aulas do curso de Língua Portuguesa possuem carga horária de 120 horas e preparam o estudante tanto para conversação do dia a dia quanto para entrevistas de emprego.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+        <span class="text-[11px] text-slate-400">Versão Digital Oficial 2026</span>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal('modal-cartilha')" class="text-xs font-semibold text-slate-600 px-4 py-2 rounded-xl hover:bg-slate-100">Fechar</button>
+          <button onclick="alert('Download da Cartilha Completa em PDF iniciado com sucesso!'); closeModal('modal-cartilha')" class="bg-brand-red hover:bg-brand-redHover text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Baixar Cartilha (PDF)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 7: LEITOR / VISUALIZADOR DE PDF SIMULADO (RF06)          -->
+  <!-- ============================================================== -->
+  <div id="modal-preview-pdf" class="modal-backdrop fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-100 max-h-[92vh] flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-red-100 text-brand-red flex items-center justify-center">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 id="preview-pdf-title" class="text-base font-bold text-slate-900">Visualizador de Material Didático</h4>
+              <p id="preview-pdf-subtitle" class="text-[11px] text-slate-400">Centro Universitário Católica de Santa Catarina</p>
+            </div>
+          </div>
+          <button onclick="closeModal('modal-preview-pdf')" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Simulação da Folha A4 do PDF Oficial -->
+        <div class="mt-4 bg-slate-100 p-4 rounded-2xl max-h-[55vh] overflow-y-auto flex justify-center">
+          <div class="bg-white shadow-md rounded-lg p-8 max-w-xl w-full border border-slate-200 text-slate-800 space-y-5 text-xs leading-relaxed">
+            <!-- Cabeçalho do Documento -->
+            <div class="flex items-center justify-between border-b pb-4 border-slate-200">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-brand-red text-white font-black text-xs flex items-center justify-center rounded">CSC</div>
+                <div>
+                  <h5 class="font-bold text-slate-900 text-sm">CATÓLICA DE SANTA CATARINA</h5>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-wide">Projeto de Extensão Imigrante Cidadão</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">120h • Joinville</span>
+            </div>
+
+            <!-- Título do Conteúdo -->
+            <div>
+              <span class="text-[10px] uppercase font-bold text-brand-red bg-red-50 px-2 py-0.5 rounded">Apostila Pedagógica</span>
+              <h3 id="pdf-mock-title" class="text-lg font-extrabold text-slate-900 mt-1">Aula 01: Apresentação Pessoal e Saudações</h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">Profª. Dra. Glaci Gurgacz • Semestre 2026/2</p>
+            </div>
+
+            <!-- Conteúdo da Aula -->
+            <div class="space-y-3 pt-2">
+              <h6 class="font-bold text-slate-800 text-xs">1. Expressões de Cumprimento e Cortesia:</h6>
+              <ul class="list-disc pl-5 space-y-1 text-slate-600 text-[11px]">
+                <li><strong>Bom dia!</strong> (usado pela manhã, até às 12h)</li>
+                <li><strong>Boa tarde!</strong> (usado das 12h até o anoitecer)</li>
+                <li><strong>Boa noite!</strong> (usado ao encontrar ou se despedir de alguém à noite)</li>
+                <li><strong>Por favor, com licença e obrigado(a).</strong></li>
+              </ul>
+
+              <h6 class="font-bold text-slate-800 text-xs mt-3">2. Diálogo Prático (Apresentação):</h6>
+              <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-mono text-[10px] space-y-1">
+                <p>— Olá! Como você se chama?</p>
+                <p>— Olá! Meu nome é Jean Pierre. Sou do Haiti e moro em Joinville.</p>
+                <p>— Muito prazer, Jean! Seja muito bem-vindo.</p>
+              </div>
+
+              <h6 class="font-bold text-slate-800 text-xs mt-3">3. Exercício para Praticar:</h6>
+              <p class="text-[11px] text-slate-600">
+                Escreva 3 frases dizendo seu nome, seu país de origem e a profissão que você deseja exercer em Santa Catarina.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-[11px] text-slate-400">Página 1 de 4 • Material Didático Oficial</span>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal('modal-preview-pdf')" class="text-xs font-semibold text-slate-600 px-4 py-2 rounded-xl hover:bg-slate-100">Voltar</button>
+          <button onclick="alert('Download do PDF original iniciado com sucesso!'); closeModal('modal-preview-pdf')" class="bg-brand-red hover:bg-brand-redHover text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Baixar Arquivo Completo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: DADOS, REGRAS DE NEGÓCIO E INTERATIVIDADE          -->
+  <!-- ============================================================== -->
+  <script>
+    // ESTADO 1: AULAS E MATERIAIS DIDÁTICOS
+    let aulas = [
+      {
+        id: 1,
+        titulo: "Aula 01 - Apresentação Pessoal, Saudações e Sons das Vogais",
+        descricao: "Expressões cotidianas: Bom dia, Boa tarde, Como você se chama? Pronúncia e alfabeto fonético.",
+        pdfNome: "Basico_Aula_01_Saudacoes.pdf",
+        tamanho: "1.4 MB",
+        turma: "Português Básico I",
+        liberada: true,
+        data: "10/09/2026"
+      },
+      {
+        id: 2,
+        titulo: "Aula 02 - Números, Horários e Documentos Pessoais no Brasil",
+        descricao: "Compreensão de numerais para falar CPF, telefone, endereço residencial e preenchimento de formulários.",
+        pdfNome: "Basico_Aula_02_Documentos.pdf",
+        tamanho: "2.1 MB",
+        turma: "Português Básico I",
+        liberada: true,
+        data: "12/09/2026"
+      },
+      {
+        id: 3,
+        titulo: "Aula 03 - Direção, Transporte e Pontos de Joinville",
+        descricao: "Como pedir informações de linhas de ônibus, terminais centrais e pontos de referência locais.",
+        pdfNome: "Basico_Aula_03_Transporte.pdf",
+        tamanho: "1.8 MB",
+        turma: "Português Básico I",
+        liberada: true,
+        data: "17/09/2026"
+      },
+      {
+        id: 4,
+        titulo: "Aula 04 - Mercado de Trabalho, Profissões e Entrevistas",
+        descricao: "Vocabulário específico para elaboração de currículo e conversação para vagas de emprego.",
+        pdfNome: "Intermediario_Aula_04_Trabalho.pdf",
+        tamanho: "2.4 MB",
+        turma: "Português Intermediário",
+        liberada: false, // Oculta inicialmente
+        data: "18/09/2026"
+      }
+    ];
+
+    // ESTADO 2: ALUNOS MATRICULADOS NA TURMA (RF05)
+    let alunos = [
+      { id: 1, nome: "Jean Pierre Alexandre", pais: "Haiti 🇭🇹", email: "jean.pierre@email.com", telefone: "(47) 98841-2011", frequencia: "95%", status: "Ativo" },
+      { id: 2, nome: "Maria Elena Rodriguez", pais: "Venezuela 🇻🇪", email: "maria.rodriguez@email.com", telefone: "(47) 99123-4567", frequencia: "100%", status: "Ativo" },
+      { id: 3, nome: "Tariq Mahmood", pais: "Paquistão 🇵🇰", email: "tariq.m@email.com", telefone: "(47) 98455-8899", frequencia: "88%", status: "Ativo" },
+      { id: 4, nome: "Dayana Gomez", pais: "Venezuela 🇻🇪", email: "dayana.gomez@email.com", telefone: "(47) 99762-1100", frequencia: "92%", status: "Ativo" },
+      { id: 5, nome: "Carlos Manuel Perez", pais: "Cuba 🇨🇺", email: "carlos.perez@email.com", telefone: "(47) 98877-3322", frequencia: "90%", status: "Ativo" }
+    ];
+
+    // ESTADO 3: PROFESSORES VOLUNTÁRIOS (ADMIN - RF01)
+    let professores = [
+      { id: 1, nome: "Profª. Dra. Glaci Gurgacz", email: "glaci.gurgacz@catolicasc.org.br", disciplina: "Português Básico I (120h)", data: "01/08/2026", status: "Coordenadora" },
+      { id: 2, nome: "Prof. Marcos Vinicius da Silva Zacchi", email: "marcos.zacchi@catolicasc.org.br", disciplina: "Português Intermediário", data: "10/08/2026", status: "Docente Voluntário" },
+      { id: 3, nome: "Yan Carlos Farias", email: "yan.farias@catolicasc.org.br", disciplina: "Cultura e Cidadania", data: "12/08/2026", status: "Monitor Acadêmico" }
+    ];
+
+    let currentRole = null;
+    let selectedLoginRole = 'aluno';
+
+    // NAVEGAÇÃO ENTRE TELAS PRINCIPAIS
+    function switchView(viewId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    // NAVEGAÇÃO DE ABAS DO PROFESSOR
+    function switchProfTab(tab) {
+      const btnAulas = document.getElementById('tab-btn-aulas');
+      const btnAlunos = document.getElementById('tab-btn-alunos');
+      const viewAulas = document.getElementById('prof-subview-aulas');
+      const viewAlunos = document.getElementById('prof-subview-alunos');
+
+      if (tab === 'aulas') {
+        btnAulas.className = "pb-3 border-b-2 border-brand-red text-brand-red flex items-center gap-2";
+        btnAlunos.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2";
+        viewAulas.classList.remove('hidden');
+        viewAlunos.classList.add('hidden');
+      } else {
+        btnAlunos.className = "pb-3 border-b-2 border-brand-red text-brand-red flex items-center gap-2";
+        btnAulas.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2";
+        viewAlunos.classList.remove('hidden');
+        viewAulas.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    // LOGIN DINÂMICO
+    function loginAs(role) {
+      currentRole = role;
+      const badge = document.getElementById('user-badge');
+      const roleText = document.getElementById('user-badge-role');
+      const nameText = document.getElementById('user-badge-name');
+      const btnLoginHeader = document.getElementById('btn-login-header');
+
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+      btnLoginHeader.classList.add('hidden');
+
+      if (role === 'professor') {
+        roleText.textContent = "Professor";
+        nameText.textContent = "Profª. Glaci Gurgacz";
+        renderProfessorList();
+        renderProfessorAlunosTable();
+        switchView('view-professor');
+      } else if (role === 'admin') {
+        roleText.textContent = "Coordenação";
+        nameText.textContent = "Setor de Extensão";
+        renderAdminProfsTable();
+        switchView('view-admin');
+      } else {
+        roleText.textContent = "Aluno";
+        nameText.textContent = "Yan / Marcos";
+        renderAlunoGrid();
+        switchView('view-aluno');
+      }
+      closeModal('modal-login');
+      lucide.createIcons();
+    }
+
+    function logout() {
+      currentRole = null;
+      document.getElementById('user-badge').classList.add('hidden');
+      document.getElementById('user-badge').classList.remove('flex');
+      document.getElementById('btn-login-header').classList.remove('hidden');
+      switchView('view-home');
+      lucide.createIcons();
+    }
+
+    // CONTROLE DE MODAL LOGIN
+    function setLoginRole(role) {
+      selectedLoginRole = role;
+      const tabAluno = document.getElementById('login-tab-aluno');
+      const tabProf = document.getElementById('login-tab-prof');
+      const tabAdmin = document.getElementById('login-tab-admin');
+      const emailInput = document.getElementById('login-email');
+
+      [tabAluno, tabProf, tabAdmin].forEach(t => t.className = "py-2 rounded-lg text-slate-600 hover:text-slate-900");
+
+      if (role === 'professor') {
+        tabProf.className = "py-2 rounded-lg bg-white shadow-xs text-amber-800 font-bold";
+        emailInput.value = "glaci.gurgacz@catolicasc.org.br";
+      } else if (role === 'admin') {
+        tabAdmin.className = "py-2 rounded-lg bg-white shadow-xs text-indigo-800 font-bold";
+        emailInput.value = "extensao@catolicasc.org.br";
+      } else {
+        tabAluno.className = "py-2 rounded-lg bg-white shadow-xs text-brand-red font-bold";
+        emailInput.value = "aluno@catolicasc.edu.br";
+      }
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      loginAs(selectedLoginRole);
+    }
+
+    // CHAVE DE LIBERAÇÃO DE AULA (TOGGLE)
+    function toggleLiberacao(id) {
+      const aula = aulas.find(a => a.id === id);
+      if (aula) {
+        aula.liberada = !aula.liberada;
+        renderProfessorList();
+        renderAlunoGrid();
+        lucide.createIcons();
+      }
+    }
+
+    // RENDERIZAÇÃO: LISTA DO PROFESSOR (COM BOTÃO DE EDITAR/SUBSTITUIR RF04)
+    function renderProfessorList() {
+      const container = document.getElementById('prof-aula-list');
+      container.innerHTML = aulas.map(a => `
+        <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-slate-50/80 transition">
+          <div class="flex items-start gap-3.5">
+            <div class="p-2.5 rounded-xl ${a.liberada ? 'bg-red-50 text-brand-red' : 'bg-slate-100 text-slate-400'} mt-1">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="text-sm font-bold text-slate-900">${a.titulo}</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded font-bold ${a.liberada ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}">
+                  ${a.liberada ? 'LIBERADA PARA O ALUNO' : 'RASCUNHO OCULTO'}
+                </span>
+                <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${a.turma}</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">${a.descricao}</p>
+              <div class="flex items-center gap-3 mt-2 text-[11px] text-slate-400 font-medium">
+                <span class="text-slate-600 font-semibold cursor-pointer hover:underline" onclick="abrirPreviewPdf('${a.titulo}')">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5 inline mr-1 text-brand-red"></i>${a.pdfNome} (${a.tamanho})
+                </span>
+                <span>•</span>
+                <span>Postado em ${a.data}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Controles de Ação da Aula -->
+          <div class="flex items-center gap-3 self-end sm:self-center">
+            <button onclick="abrirEdicaoAula(${a.id})" class="p-2 text-slate-500 hover:text-brand-red hover:bg-slate-100 rounded-lg transition" title="Editar ou Substituir Material (RF04)">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </button>
+            <button onclick="excluirAula(${a.id})" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Remover Aula">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+            <div class="h-6 w-px bg-slate-200"></div>
+            <label class="relative inline-flex items-center cursor-pointer" title="Liberar/Ocultar aula aos alunos">
+              <input type="checkbox" class="sr-only peer" ${a.liberada ? 'checked' : ''} onchange="toggleLiberacao(${a.id})">
+              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // RENDERIZAÇÃO: GRID DO ALUNO (APENAS LIBERADAS)
+    function renderAlunoGrid() {
+      const container = document.getElementById('aluno-aula-grid');
+      const liberadas = aulas.filter(a => a.liberada);
+      document.getElementById('aluno-count-badge').textContent = liberadas.length + " Aulas";
+
+      if (liberadas.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl">
+            <i data-lucide="inbox" class="w-12 h-12 mx-auto stroke-1 text-slate-300"></i>
+            <p class="mt-3 text-sm font-semibold text-slate-600">Nenhum material foi liberado pelo professor ainda.</p>
+            <p class="text-xs text-slate-400 mt-1">Aguarde a liberação dos arquivos didáticos após o término da aula presencial.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = liberadas.map(a => `
+        <div class="bg-white border border-slate-200 hover:border-red-200 rounded-2xl p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[10px] bg-red-100 text-brand-red font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">${a.turma}</span>
+              <span class="text-xs text-slate-400 font-medium">${a.data}</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-base leading-snug">${a.titulo}</h4>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed">${a.descricao}</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+              <span class="truncate max-w-[170px]"><i data-lucide="file-text" class="w-3.5 h-3.5 inline mr-1 text-brand-red"></i>${a.pdfNome}</span>
+              <span class="text-slate-400 font-mono text-[11px]">${a.tamanho}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="abrirPreviewPdf('${a.titulo}')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+                <span>Visualizar</span>
+              </button>
+              <button onclick="alert('Download do arquivo ' + '${a.pdfNome}' + ' iniciado com sucesso!')" class="bg-brand-red hover:bg-brand-redHover text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Baixar PDF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // RENDERIZAÇÃO: TABELA DE ALUNOS (VISÃO DO PROFESSOR - RF05)
+    function renderProfessorAlunosTable() {
+      const tbody = document.getElementById('prof-alunos-table-body');
+      document.getElementById('total-alunos-prof').textContent = alunos.length;
+      tbody.innerHTML = alunos.map(al => `
+        <tr class="hover:bg-slate-50/80 transition">
+          <td class="px-6 py-4 font-bold text-slate-900">${al.nome}</td>
+          <td class="px-6 py-4 font-medium">${al.pais}</td>
+          <td class="px-6 py-4">${al.email}<br><span class="text-slate-400 text-[11px]">${al.telefone}</span></td>
+          <td class="px-6 py-4 font-semibold text-slate-800">${al.frequencia}</td>
+          <td class="px-6 py-4">
+            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+              ${al.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button onclick="alert('Histórico pedagógico do aluno: ' + '${al.nome}')" class="text-brand-red hover:underline font-semibold">Ver Ficha</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // RENDERIZAÇÃO: TABELA DE PROFESSORES (ADMIN - RF01)
+    function renderAdminProfsTable() {
+      const tbody = document.getElementById('admin-profs-table-body');
+      document.getElementById('admin-total-profs').textContent = professores.length;
+      tbody.innerHTML = professores.map(p => `
+        <tr class="hover:bg-slate-50/80 transition">
+          <td class="px-6 py-4 font-bold text-slate-900">${p.nome}</td>
+          <td class="px-6 py-4 font-mono text-slate-600">${p.email}</td>
+          <td class="px-6 py-4 font-semibold text-slate-800">${p.disciplina}</td>
+          <td class="px-6 py-4 text-slate-500">${p.data}</td>
+          <td class="px-6 py-4">
+            <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+              ${p.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <button onclick="alert('Editar credenciais do professor: ' + '${p.nome}')" class="text-brand-red hover:underline font-semibold">Editar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // AÇÕES DE CADASTRO E EDIÇÃO
+    function salvarNovaAula(event) {
+      event.preventDefault();
+      const titulo = document.getElementById('aula-titulo').value;
+      const desc = document.getElementById('aula-desc').value;
+      const turma = document.getElementById('aula-turma').value;
+      const liberada = document.getElementById('aula-liberada').checked;
+      const fileInput = document.getElementById('aula-file');
+      const fileName = fileInput.files && fileInput.files[0] ? fileInput.files[0].name : "Material_Aula_Didatico.pdf";
+
+      const novaAula = {
+        id: Date.now(),
+        titulo: titulo,
+        descricao: desc || "Material pedagógico disponibilizado pela coordenação.",
+        pdfNome: fileName,
+        tamanho: "2.1 MB",
+        turma: turma,
+        liberada: liberada,
+        data: new Date().toLocaleDateString('pt-BR')
+      };
+
+      aulas.unshift(novaAula);
+      document.getElementById('form-nova-aula').reset();
+      document.getElementById('file-selected-name').textContent = "";
+      closeModal('modal-nova-aula');
+      renderProfessorList();
+      renderAlunoGrid();
+      lucide.createIcons();
+    }
+
+    function abrirEdicaoAula(id) {
+      const aula = aulas.find(a => a.id === id);
+      if (!aula) return;
+      document.getElementById('edit-aula-id').value = aula.id;
+      document.getElementById('edit-aula-titulo').value = aula.titulo;
+      document.getElementById('edit-aula-desc').value = aula.descricao;
+      document.getElementById('edit-file-selected-name').textContent = "Arquivo atual: " + aula.pdfNome;
+      openModal('modal-editar-aula');
+    }
+
+    function salvarEdicaoAula(event) {
+      event.preventDefault();
+      const id = parseInt(document.getElementById('edit-aula-id').value);
+      const aula = aulas.find(a => a.id === id);
+      if (aula) {
+        aula.titulo = document.getElementById('edit-aula-titulo').value;
+        aula.descricao = document.getElementById('edit-aula-desc').value;
+        const fileInput = document.getElementById('edit-aula-file');
+        if (fileInput.files && fileInput.files[0]) {
+          aula.pdfNome = fileInput.files[0].name;
+        }
+        renderProfessorList();
+        renderAlunoGrid();
+        closeModal('modal-editar-aula');
+        lucide.createIcons();
+      }
+    }
+
+    function excluirAula(id) {
+      if (confirm("Tem certeza que deseja remover esta aula e seu material didático?")) {
+        aulas = aulas.filter(a => a.id !== id);
+        renderProfessorList();
+        renderAlunoGrid();
+        lucide.createIcons();
+      }
+    }
+
+    function salvarNovoAluno(event) {
+      event.preventDefault();
+      const nome = document.getElementById('aluno-nome').value;
+      const pais = document.getElementById('aluno-pais').value;
+      const tel = document.getElementById('aluno-telefone').value;
+      const email = document.getElementById('aluno-email').value;
+
+      alunos.push({
+        id: Date.now(),
+        nome: nome,
+        pais: pais,
+        email: email,
+        telefone: tel || "(47) 98800-0000",
+        frequencia: "100%",
+        status: "Ativo"
+      });
+
+      renderProfessorAlunosTable();
+      closeModal('modal-matricular-aluno');
+      lucide.createIcons();
+    }
+
+    function salvarNovoProfessor(event) {
+      event.preventDefault();
+      const nome = document.getElementById('prof-nome').value;
+      const email = document.getElementById('prof-email').value;
+      const disc = document.getElementById('prof-disc').value;
+
+      professores.push({
+        id: Date.now(),
+        nome: nome,
+        email: email,
+        disciplina: disc,
+        data: new Date().toLocaleDateString('pt-BR'),
+        status: "Docente Voluntário"
+      });
+
+      renderAdminProfsTable();
+      closeModal('modal-novo-prof');
+      lucide.createIcons();
+    }
+
+    function abrirPreviewPdf(titulo) {
+      document.getElementById('preview-pdf-title').textContent = titulo;
+      document.getElementById('pdf-mock-title').textContent = titulo;
+      openModal('modal-preview-pdf');
+    }
+
+    // UTILITÁRIOS DE MODAL
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('active');
+        lucide.createIcons();
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.remove('active');
+    }
+
+    function updateFileName(input, targetSpanId) {
+      if (input.files && input.files[0]) {
+        document.getElementById(targetSpanId).textContent = "Novo arquivo selecionado: " + input.files[0].name;
+      }
+    }
+
+    // INICIALIZAÇÃO AUTOMÁTICA
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProfessorList();
+      renderAlunoGrid();
+      renderProfessorAlunosTable();
+      renderAdminProfsTable();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
